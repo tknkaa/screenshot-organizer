@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "Dice Roller": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "fastmcp",
+        "fastmcp",
+        "run",
+        "/home/tknkaa/personal/gemini-mcp/server.py"
+      ]
+    }
+  }
+}
