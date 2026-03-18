@@ -29,8 +29,8 @@ display_image() {
 # Display usage information and exit
 # Shows the expected command syntax and default behavior
 usage() {
-    echo "使い方: $0 [ディレクトリ]"
-    echo "  ディレクトリ省略時はカレントディレクトリを使用"
+    echo "Usage: $0 [directory]"
+    echo "  If directory is omitted, the current directory is used"
     exit 1
 }
 
@@ -39,7 +39,7 @@ TARGET_DIR="${1:-.}"
 
 # Validate that the target directory exists
 if [[ ! -d "$TARGET_DIR" ]]; then
-    echo "エラー: ディレクトリが見つかりません: $TARGET_DIR"
+    echo "Error: Directory not found: $TARGET_DIR"
     usage
 fi
 
@@ -50,11 +50,11 @@ mapfile -t IMAGES < <(find "$TARGET_DIR" -maxdepth 1 -type f \( -iname "*.png" -
 
 # Exit early if no images were found
 if [[ ${#IMAGES[@]} -eq 0 ]]; then
-    echo "画像ファイルが見つかりませんでした: $TARGET_DIR"
+    echo "No image files found in: $TARGET_DIR"
     exit 0
 fi
 
-echo "📁 ${TARGET_DIR} に ${#IMAGES[@]} 件の画像が見つかりました"
+echo "📁 Found ${#IMAGES[@]} images in $TARGET_DIR"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
@@ -78,7 +78,7 @@ for IMAGE in "${IMAGES[@]}"; do
     display_image "$IMAGE"
     
     echo ""
-    echo -n "  [y] 削除  [n] 残す  [q] 終了 > "
+    echo -n "  [y] Delete  [n] Keep  [q] Quit > "
     
     # Interactive input loop - read single character and process user action
     while true; do
@@ -90,13 +90,13 @@ for IMAGE in "${IMAGES[@]}"; do
             y|Y)
                 # User chose to delete the image
                 rm "$IMAGE"
-                echo "  🗑️  削除しました: $FILENAME"
+                echo "  🗑️  Deleted: $FILENAME"
                 DELETED=$((DELETED + 1))
                 break
                 ;;
             n|N|"")
                 # User chose to keep the image (Enter or 'n')
-                echo "  ✅ 残しました: $FILENAME"
+                echo "  ✅ Kept: $FILENAME"
                 KEPT=$((KEPT + 1))
                 break
                 ;;
@@ -104,13 +104,13 @@ for IMAGE in "${IMAGES[@]}"; do
                 # User chose to quit early - show summary and exit
                 echo ""
                 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo "📊 結果: 削除 ${DELETED}件 / 残した ${KEPT}件 / 未処理 $((TOTAL - INDEX))件"
-                echo "終了しました"
+                echo "📊 Summary: Deleted ${DELETED} | Kept ${KEPT} | Unprocessed $((TOTAL - INDEX))"
+                echo "Exited"
                 exit 0
                 ;;
             *)
                 # Invalid input - prompt again
-                echo -n "  y/n/q を入力してください > "
+                echo -n "  Please enter y/n/q > "
                 ;;
         esac
     done
@@ -120,5 +120,5 @@ done
 
 # All images processed - display final summary
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✨ 全て処理完了！"
-echo "📊 結果: 削除 ${DELETED}件 / 残した ${KEPT}件"
+echo "✨ All images processed!"
+echo "📊 Summary: Deleted ${DELETED} | Kept ${KEPT}"
